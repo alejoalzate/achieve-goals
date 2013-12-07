@@ -1,0 +1,71 @@
+<% provide(:title, "Notifications") %>
+<div class="row">
+  <aside class="span12">
+    <section>
+      <h1>Pending Commitments:</h1>
+    </section>
+    <section>
+      <table class="table table-condensed table-hover table-striped">
+        <thead>
+        <tr>
+          <th>End Date</th>
+          <th>Point Value</th>
+          <th>Overseer User</th>
+          <th>Active User</th>
+          <th>Description</th>
+          <th>Date Created</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% Commitment.where("(active_user_id = ? OR overseer_user_id = ?)
+                         AND active_user_id IS NOT NULL
+                         AND overseer_user_id IS NOT NULL
+                         AND creator_id != ?
+                         AND status = ?",
+                         @user.id, @user.id, @user.id, "Pending").find_each do |user_commitment| %>
+          <% supervisor = User.where(id: user_commitment.overseer_user_id).first! %>
+          <% active_user = User.where(id: user_commitment.active_user_id).first! %>
+          <tr>
+            <td><%= user_commitment.date_end %></td>
+            <td><%= user_commitment.score_weight %></td>
+            <td><%= supervisor.name %></td>
+            <td><%= active_user.name %></td>
+            <td><%= user_commitment.description %></td>
+            <td><%= user_commitment.date_made %></td>
+
+            <td><%= link_to "Accept",
+                            commitment_accept_path(id: user_commitment.id),
+                            title: user_commitment.id,
+                            class: "btn btn-small btn-primary" %>
+            </td>
+            <td><%= link_to "Decline", user_commitment, method: :delete,
+                            data: { confirm: "Are you sure you want to decline and delete this commitment?" },
+                            title: user_commitment.id,
+                            class: "btn btn-small btn-danger" %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </section>
+  </aside>
+</div>
+<div class="row">
+  <aside class="span6">
+    <section>
+      <h1>Pending Contact Requests:</h1>
+    </section>
+    <section>
+      <table class="table table-contacts table-condensed table-hover table-striped">
+        <tbody>
+        <tr>
+          <td>[pic]</td>
+          <td>UserName</td>
+          <td><button class='btn btn-small btn-primary'>Accept</button></td>
+          <td><button class='btn btn-small btn-danger'>Decline</button></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+  </aside>
+</div>

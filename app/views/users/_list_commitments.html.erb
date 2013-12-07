@@ -1,0 +1,67 @@
+<div class="user-commitments">
+  <table class="table table-condensed table-hover table-striped">
+    <div class="col-sm-3 col-md-3 pull-right">
+      <form class="navbar-form" role="search">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="Search Commitments" name="srch-term" id="srch-term">
+        </div>
+      </form>
+    </div>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>End Date</th>
+        <th>Point Value</th>
+        <th>Supervisor User</th>
+        <th>Active User</th>
+        <th>Description</th>
+        <th>Date Created</th>
+        <th>Edit</th>
+      </tr>
+    </thead>
+    <tbody>
+
+    <% Commitment.where("(active_user_id = ? OR overseer_user_id = ?)
+                         AND active_user_id IS NOT NULL
+                         AND overseer_user_id IS NOT NULL
+                         AND status != ?",
+                        @user.id, @user.id, "Pending").find_each do |user_commitment| %>
+      <% supervisor = User.where(id: user_commitment.overseer_user_id).first! %>
+      <% active_user = User.where(id: user_commitment.active_user_id).first! %>
+      <tr>
+        <td><%= user_commitment.status %></td>
+        <td><%= user_commitment.date_end.month %>/<%= user_commitment.date_end.day %>/<%= user_commitment.date_end.year %></td>
+        <td><%= user_commitment.score_weight %></td>
+        <td><%= supervisor.name %></td>
+        <td><%= active_user.name %></td>
+        <td><%= user_commitment.description %></td>
+        <td><%= user_commitment.date_made.month %>/<%= user_commitment.date_made.day %>/<%= user_commitment.date_made.year %></td>
+        <% if user_commitment.status != "Completed"%>
+          <% if user_commitment.status == "Awaiting Feedback"  %>
+
+            <% if @user.id == user_commitment.overseer_user_id %>
+              <% if user_commitment.perception_active_score == 0 %>
+                <td><%= link_to "Almost done - Leave Feedback for ActiveUser", commitment_feedback_path(id: user_commitment.id) %></td>
+              <% else %>
+                <td>Waiting for <%= active_user.name %>'s feedback</td>
+              <% end %>
+            <% end %>
+            <% if @user.id == user_commitment.active_user_id %>
+              <% if user_commitment.perception_supervisor_score == 0 %>
+                <td><%= link_to "Almost done - Leave Feedback for the Supervisor", commitment_feedback_path(id: user_commitment.id) %></td>
+              <% else %>
+                <td>Waiting for <%= supervisor.name %>'s feedback</td>
+              <% end %>
+            <% end %>
+          <% else %>
+            <td><%= link_to "Edit", edit_commitment_path(user_commitment) %></td>
+          <% end %>
+        <% else %>
+            <td> <%= link_to "Completed!", commitment_show_path(id: user_commitment.id) %> </td>
+        <% end %>
+      </tr>
+    <% end %>
+
+    </tbody>
+  </table>
+</div>

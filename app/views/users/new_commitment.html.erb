@@ -1,0 +1,27 @@
+<% provide(:title, 'Create New Commitment') %>
+<h1>Create New Commitment</h1>
+
+<div class="row">
+  <div class="span6 offset3">
+    <%= form_for(@commitment) do |f| %>
+        <%= render 'shared/commitment_error_messages' %>
+
+        <%= f.label "Who will be the supervisor?" %>
+        <%= f.collection_select :overseer_user_id, User.all,
+                                :id, :name %>
+
+        <%= f.label "Description of the Commitment: " %>
+        <%= f.text_field :description %>
+
+        <%= f.label "Pick an end date:" %>
+        <%= f.date_select :date_end, start_year: Time.now.year,
+                          prompt: { day: 'Select day', month: 'Select month', year: 'Select year' }%>
+
+        <%= f.label "Give the commitment a weight:" %>
+        <%= f.select :score_weight, options_for_select([ 5, 10, 15, 20]) %>
+
+        <%= f.submit "Create Commitment", class: "btn btn-large btn-primary" %>
+
+    <% end %>
+  </div>
+</div>

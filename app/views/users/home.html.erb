@@ -1,0 +1,36 @@
+<% provide(:title, @user.name) %>
+<div class="row">
+  <aside class="span3">
+    <section>
+      <h1>
+        <%= gravatar_for @user %>
+        <%= @user.name %>
+      </h1>
+      <h2>User Homepage</h2>
+    </section>
+    <section>
+      <h1>RC Points:</h1>
+      <h2><%= @user.rc_score %></h2>
+    </section>
+    <section>
+      <h1>Perception Points:</h1>
+      <h2><%= @user.perception_score %></h2>
+    </section>
+    <section>
+      <h1>Reputation:</h1>
+      <% if @user.rc_score == 0 %>
+        <% @repPercent = 0 %>
+      <% else %>
+        <% @repPercent = 100 * (@user.perception_score.to_f/@user.rc_score.to_f) %>
+      <% end %>
+      <h2><%= @repPercent.to_int %>%</h2>
+    </section>
+
+  </aside>
+  <aside class="span8">
+    <section>
+      <h1>List of commitments:</h1>
+      <%= render 'users/list_commitments' %>
+    </section>
+  </aside>
+</div>

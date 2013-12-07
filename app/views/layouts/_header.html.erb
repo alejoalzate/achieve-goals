@@ -1,0 +1,38 @@
+<header class="navbar navbar-fixed-top navbar-inverse">
+  <div class="navbar-inner">
+    <div class="container">
+
+      <%= link_to "Relationship Capital.", root_path, id: "logo" %>
+      <ul class="nav pull-left">
+        <% if signed_in? %>
+          <%= render 'layouts/header_dropdown' %>
+
+        <% else %>
+          <li><%= link_to "Sign in", signin_path %></li>
+          <li><%= link_to "New user?", signup_path%></li>
+        <% end %>
+      </ul>
+
+      <ul class="nav pull-right">
+        <% if signed_in? %>
+          <% if is_admin? %>
+            <li><%= link_to "Admin Page", admin_path %></li>
+          <% end %>
+          <% if has_notifications? %>
+            <li><%= link_to "New Notifications!", notifications_path, class: "btn btn-small btn-danger" %></li>
+          <% else %>
+            <li><%= link_to "Notifications", notifications_path %></li>
+          <% end %>
+        <% end %>
+        <div class="col-sm-3 col-md-3 pull-right">
+          <form class="navbar-form" role="search">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Search Users" name="srch-term" id="srch-term">
+            </div>
+          </form>
+        </div>
+      </ul>
+
+    </div>
+  </div>
+</header>
